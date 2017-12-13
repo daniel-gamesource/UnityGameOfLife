@@ -6,11 +6,13 @@ public class Box : MonoBehaviour, IEquatable<Box> {
 
 	public int positionX;
 	public int positionY;
+	public bool isChecked = false;
 
 	//Constructor
 	public Box(int positionX, int positionY){
 		this.positionX = positionX;
 		this.positionY = positionY;
+		isChecked = false;
 	}
 
 	//IEquatable override methods

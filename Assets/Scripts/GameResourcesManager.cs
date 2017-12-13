@@ -10,10 +10,8 @@ public class GameResourcesManager : MonoBehaviour {
 
 	//visual object that will represent the box
 	public Toggle box;
-
-	//private Toggle[] boxes = new Toggle[quantityOfLines, quantityOfCollumns];
 	public List<Box> checkedBoxes = null; 
-	//Box[] checkedBoxes = null;//new Box[quantityOfLines, quantityOfCollumns];
+
 	// Use this for initialization
 	void Start () {
 		cloneBoxes ();
@@ -21,8 +19,8 @@ public class GameResourcesManager : MonoBehaviour {
 	}
 
 	private void cloneBoxes(){
-		float boxHeight = 0f;//box.graphic.rectTransform.rect.height;
-		float boxWidth = 0f;//box.graphic.rectTransform.rect.width;
+		float boxHeight = 0f;
+		float boxWidth = 0f;
 
 		for (int lineCounter = 0; lineCounter < quantityOfLines; lineCounter++) {
 
@@ -35,11 +33,7 @@ public class GameResourcesManager : MonoBehaviour {
 
 				//add the box info
 				Box newBox = instanceBox.GetComponent<Box>();
-				//the box has been aded on the toggleObject on the scene.
-//				if (newBox == null) {
-//					newBox = new Box (collCounter, lineCounter);
-				  //instanceBox.gameObject.AddComponent (box);
-//				}
+
 				newBox.positionX = collCounter; 
 				newBox.positionY = lineCounter;
 
@@ -53,6 +47,7 @@ public class GameResourcesManager : MonoBehaviour {
 
 		//we need to resize the box holder to align the items on the center of the screen
 		resizeBoxHolder(box.graphic.rectTransform.rect.width,  box.graphic.rectTransform.rect.height);
+
 		//disable the box
 		box.gameObject.SetActive(false);
 	}
@@ -62,14 +57,16 @@ public class GameResourcesManager : MonoBehaviour {
 		rt.sizeDelta = new Vector2 (boxWidth * quantityOfCollumns, boxHeight * quantityOfLines );//multiply with scale to rezise correctly
 	}
 
-	public void addCheckedBox(Toggle toggle){
-		Box box = toggle.GetComponent<Box>();
+	public void addCheckedBox(Box box){
+		Toggle toggle = box.GetComponent<Toggle>();
+	
 		if (toggle.isOn && 
 			!checkedBoxes.Exists (x => (x.positionX == box.positionX &&
-									    x.positionY == box.positionY))) {
+				x.positionY == box.positionY))) {
+			box.isChecked = true;
 			checkedBoxes.Add (box);
-		} 
-		else if (!toggle.isOn){// && !checkedBoxes.Exists (x => x.positionX == box.positionX)) {
+		} else if (!toggle.isOn) {
+			box.isChecked = false;
 			checkedBoxes.Remove (box);
 		}
 	}
