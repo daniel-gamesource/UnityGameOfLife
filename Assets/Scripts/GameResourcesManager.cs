@@ -28,7 +28,7 @@ public class GameResourcesManager : MonoBehaviour {
 				//boxWidth is positive to clone for the right side
 				//boxHeight is negative to clone for the down side
 				Toggle instanceBox = Instantiate (box, box.transform.position + new Vector3 (boxWidth, boxHeight, 0f), box.transform.rotation);
-				instanceBox.name = "BOX" + lineCounter + collCounter;
+				instanceBox.name = string.Concat("Y", lineCounter, "X",  collCounter);//using string.Concat instead of "" + "" for peformance
 				instanceBox.transform.SetParent (box.transform.parent);
 
 				//add the box info

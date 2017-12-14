@@ -6,14 +6,18 @@ using UnityEngine.UI;
 
 public class Rules : MonoBehaviour {
 
-	private List<Item> itemsToTest; //letf id public to show on debug
+	private List<Item> itemsToTest;
 	private List<Box> checkedBoxes;
 	private GameResourcesManager grm;
 	public int stepCounter = 0;
 	public Text stepsUI;//this item is initialized on the editor
+	private WaitForSeconds stepDuration = new WaitForSeconds (1f);
+	public Slider slider;//this item is initialized on the editor
 
 	void Start(){
 		grm = transform.GetComponent<GameResourcesManager> ();
+		slider.minValue = 0.3f;//maximum speed
+		slider.maxValue = 1f;//minimum speed
 	}
 
 	//class that will be used to test the rules
@@ -96,32 +100,58 @@ public class Rules : MonoBehaviour {
 		//add the neighbors positions above
 		if (tempPositionY - 1 >= 0) {
 			if (tempPositionX - 1 >= 0) {
-				addItemToList (transform.Find ("BOX" + (tempPositionY - 1) + "" + (tempPositionX - 1)).GetComponent<Box> ());
+				addItemToList (
+					transform.Find (
+						string.Concat("Y", (tempPositionY - 1) , "X" , (tempPositionX - 1))
+					).GetComponent<Box> ());
 			}
 
-			addItemToList(transform.Find ("BOX" + (tempPositionY -1) + "" + tempPositionX).GetComponent<Box>());
+			addItemToList(
+				transform.Find (
+					string.Concat("Y", (tempPositionY -1) , "X" , tempPositionX)
+				).GetComponent<Box>());
 
 			if (tempPositionX + 1 < grm.quantityOfCollumns) {
-				addItemToList (transform.Find ("BOX" + (tempPositionY - 1) + "" + (tempPositionX + 1)).GetComponent<Box> ());
+				addItemToList (
+					transform.Find (
+						string.Concat("Y", (tempPositionY - 1) , "X" , (tempPositionX + 1))
+					).GetComponent<Box> ());
 			}
 		}
 
 		//add the neighbors from the sides
-		if(tempPositionX -1 >= 0)
-			addItemToList(transform.Find ("BOX" + tempPositionY  + "" + (tempPositionX - 1)).GetComponent<Box>());
-		if(tempPositionX +1 < grm.quantityOfCollumns)
-			addItemToList(transform.Find ("BOX" + tempPositionY  + "" + (tempPositionX + 1)).GetComponent<Box>());
+		if (tempPositionX - 1 >= 0) {
+			addItemToList (
+				transform.Find (
+					string.Concat ("Y", tempPositionY, "X", (tempPositionX - 1))
+				).GetComponent<Box> ());
+		}
+		if (tempPositionX + 1 < grm.quantityOfCollumns) {
+			addItemToList (
+				transform.Find (
+					string.Concat("Y" , tempPositionY , "X" , (tempPositionX + 1))
+				).GetComponent<Box> ());
+		}
 
 		//add the neighbors of under line
 		if (tempPositionY + 1 < grm.quantityOfLines) {
 			if (tempPositionX - 1 >= 0) {
-				addItemToList (transform.Find ("BOX" + (tempPositionY + 1) + "" + (tempPositionX - 1)).GetComponent<Box> ());
+				addItemToList (
+					transform.Find (
+						string.Concat("Y" , (tempPositionY + 1) , "X" , (tempPositionX - 1))
+					).GetComponent<Box> ());
 			}
 
-			addItemToList(transform.Find ("BOX" + (tempPositionY +1) + "" + tempPositionX ).GetComponent<Box>());
+			addItemToList(
+				transform.Find (
+					string.Concat("Y" , (tempPositionY +1) , "X" , tempPositionX )
+				).GetComponent<Box>());
 
 			if (tempPositionX + 1 < grm.quantityOfCollumns) {
-				addItemToList (transform.Find ("BOX" + (tempPositionY + 1) + "" + (tempPositionX + 1)).GetComponent<Box> ());
+				addItemToList (
+					transform.Find (
+						string.Concat("Y" , (tempPositionY + 1) , "X" , (tempPositionX + 1))
+					).GetComponent<Box> ());
 			}
 		}
 
@@ -130,7 +160,7 @@ public class Rules : MonoBehaviour {
 
 	private void executeStep(){
 		if (itemsToTest != null && itemsToTest.Count > 0) {
-			Debug.Log ("starting execution");
+
 			foreach(Item item in itemsToTest){
 				Box box = item.itemBox;
 				int tempPositionX = box.positionX;
@@ -140,43 +170,59 @@ public class Rules : MonoBehaviour {
 				//test the neighbors positions above
 				if (tempPositionY - 1 >= 0) {
 					if (tempPositionX - 1 >= 0 &&
-						transform.Find ("BOX" + (tempPositionY - 1) + "" + (tempPositionX - 1)).GetComponent<Box> ().isChecked) {
+						transform.Find (
+								string.Concat("Y" , (tempPositionY - 1) , "X" , (tempPositionX - 1))
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 
-					if (transform.Find ("BOX" + (tempPositionY - 1) + "" + tempPositionX).GetComponent<Box> ().isChecked) {
+					if (transform.Find (
+								string.Concat("Y" , (tempPositionY - 1) , "X" , tempPositionX)
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 
 					if (tempPositionX + 1 < grm.quantityOfCollumns &&
-						transform.Find ("BOX" + (tempPositionY - 1) + "" + (tempPositionX + 1)).GetComponent<Box> ().isChecked) {
+						transform.Find (
+								string.Concat("Y", (tempPositionY - 1) , "X" , (tempPositionX + 1))
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 				}
 
 				//test the neighbors from the sides
-				if (tempPositionX - 1 >= 0 && transform.Find ("BOX" + tempPositionY + "" + (tempPositionX - 1)).GetComponent<Box> ().isChecked) {
+				if (tempPositionX - 1 >= 0 && transform.Find (
+							string.Concat("Y" , tempPositionY , "X" , (tempPositionX - 1))
+						).GetComponent<Box> ().isChecked) {
 					neighborCounter++;
 				}
 
 				if (tempPositionX + 1 < grm.quantityOfCollumns &&
-				   transform.Find ("BOX" + tempPositionY + "" + (tempPositionX + 1)).GetComponent<Box> ().isChecked) {
+					transform.Find (
+							string.Concat("Y" , tempPositionY , "X" , (tempPositionX + 1))
+						).GetComponent<Box> ().isChecked) {
 					neighborCounter++;
 				}
 
 				//test the neighbors of under line
 				if (tempPositionY + 1 < grm.quantityOfLines) {
 					if (tempPositionX - 1 >= 0 &&
-						transform.Find ("BOX" + (tempPositionY + 1) + "" + (tempPositionX - 1)).GetComponent<Box> ().isChecked) {
+						transform.Find (
+								string.Concat("Y" , (tempPositionY + 1) , "X" , (tempPositionX - 1))
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 
-					if (transform.Find ("BOX" + (tempPositionY + 1) + "" + tempPositionX).GetComponent<Box> ().isChecked) {
+					if (transform.Find (
+								string.Concat("Y" , (tempPositionY + 1) , "X" , tempPositionX)
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 
 					if (tempPositionX + 1 < grm.quantityOfCollumns &&
-						transform.Find ("BOX" + (tempPositionY + 1) + "" + (tempPositionX + 1)).GetComponent<Box> ().isChecked) {
+						transform.Find (
+								string.Concat("Y" , (tempPositionY + 1) , "X" , (tempPositionX + 1))
+							).GetComponent<Box> ().isChecked) {
 						neighborCounter++;
 					}
 				}
@@ -218,7 +264,7 @@ public class Rules : MonoBehaviour {
 	}
 
 	private void updateValues(){
-		Debug.Log ("updating values");
+
 		//erase the list of boxes
 		grm.checkedBoxes = new List<Box> ();
 		Toggle tempToggle;
@@ -234,6 +280,35 @@ public class Rules : MonoBehaviour {
 				tempToggle.isOn = false;
 				item.itemBox.isChecked = false;
 			}
+		}
+	}
+
+	//this variable is to manage the play buttom;
+	private bool isNotStop = true;
+
+	public void stopExecution(){
+		isNotStop = false;
+	}
+
+	public void executePlay(){
+		isNotStop = true;
+		StartCoroutine (Play ());
+	}
+
+	public void updateSpeed(){
+		stepDuration = new WaitForSeconds (slider.value);
+	}
+
+	//coroutine
+	private IEnumerator Play(){
+		//execute one step
+		doStep ();
+
+		yield return stepDuration;
+
+		//if not ask to stop, do the call play again (loop till press Stop).
+		if (isNotStop) {
+			StartCoroutine (Play ());
 		}
 	}
 
